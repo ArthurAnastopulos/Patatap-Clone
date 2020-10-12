@@ -5,13 +5,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="styles.css">
     <script type="text/javascript" src="paper-full.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.0/howler.min.js" integrity="sha512-ALoawPS0JxHQ+8dGL7htZIlVNRaE/SN9gHD4G8pJJTi9H4BQ/3PjdvhggSGR34g00mvTPFkxQuveQUsJA5664Q==" crossorigin="anonymous"></script>
     <script type="text/paperscript" canvas="myCanvas">
+        var sound = new Howl({
+            src: ['sounds/bubbles.mp3']
+        });
+        
+        var circles = [];
+
         function onKeyDown(event) {
+            sound.play();
             var maxCoord = new Point(view.size.width, view.size.height); 
             var randomCoord = Point.random();
             var coord = maxCoord * randomCoord;
-            new Path.Circle(coord, 50).fillColor = "red";
-        }   
+            var newCircle = new Path.Circle(coord, 50);
+            newCircle.fillColor = randomColor();
+            circles.push(newCircle);
+        }
+      
+        function onFrame(event) {
+            for(var i = 0; i < circles.length; i++) {
+                circles[i].fillColor.hue += 1;
+                circles[i].scale(.9);
+                if(circles[i].area < 1){
+                    circles[i].remove();
+                    circles.splice(i, 1);
+                }
+            }
+        }
+
+        function randomColor() {
+            var r = Math.floor(Math.random() * 256);
+            var g = Math.floor(Math.random() * 256);
+            var b = Math.floor(Math.random() * 256);
+            return "rgb(" + r + ", " + g + ", " + b +")";
+        }
+
     </script>
     <title>Patatap Clone</title>
 </head>
